@@ -9,7 +9,7 @@ Hawing problem updating OwnCloud client on Ubuntu 16.04 ?
 
 The issue is described and discussed [here][issue]. 
 
-How to solve it? Follow these steps:
+How to solve the issue? 
 
 {% highlight bash %}
 $ wget http://download.opensuse.org/repositories/isv:ownCloud:desktop/Ubuntu_16.04/Release.key
