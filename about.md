@@ -8,7 +8,7 @@ Here you can find some fun facts about me and my work.
 
 Researcher and developer @ [XLAB](http://xlab.si/), pet-lover, sports enthusiast
 
-My blog: [alescernivec.blogspot.com](http://alescernivec.blogspot.com) 
+My old blog: [alescernivec.blogspot.com](http://alescernivec.blogspot.com) 
 
 Me on GitHub: [alescernivec on GitHub](https://github.com/alescernivec)
 
@@ -20,4 +20,4 @@ Mendeley profile: [alescernivec on Mendeley](http://www.mendeley.com/profiles/al
 
 Google scholar profile: [Ales Cernivec in Google Scholar](http://scholar.google.si/citations?user=Nh-Ckg0AAAAJ&hl=en)
 
-Site maintainer of [DlogS - Slovenian society of speech therapists](http://www.dlogs.si)
+Ext site maintainer of [DlogS - Slovenian society of speech therapists](http://www.dlogs.si)
