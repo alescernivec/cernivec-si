@@ -96,3 +96,9 @@ Usage
    jekyll b
    jekyll s
 ```
+
+## Post Jekyll setup
+
+### Serve the site via HTTPS (Let's Encrypt)
+
+Check out these tutorials on how to set-up Let's Encrypt: https://linuxize.com/post/secure-nginx-with-let-s-encrypt-on-centos-7/
