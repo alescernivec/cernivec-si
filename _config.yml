@@ -4,7 +4,7 @@ email: ales.cernivec@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   This is Aleš' site. Here you can find some facts about me and my work.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: http://www.cernivec.si # the base hostname & protocol for your site
+url: https://www.cernivec.si # the base hostname & protocol for your site
 twitter_username: alescernivec
 github_username:  alescernivec
 
