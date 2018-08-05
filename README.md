@@ -22,7 +22,7 @@ services:
       - 4000:4000
       - 35729:35729
       - 3000:3000
-      -   80:4000
+      - 8080:4000
 ```
 
 #### Usage
@@ -60,6 +60,26 @@ cd ..
 ```
 
 and back to **1**.
+
+## Set up nginx
+
+In the example above docker-compose file has port ```8080``` used as Jekyll's HTTP port. Nginx's ```.conf``` file should be similar to this:
+
+```
+server {
+    server_name    cernivec.si www.cernivec.si;
+    listen         80;
+    listen         [::]:80;
+
+  location / {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_pass http://localhost:8080;
+  }
+
+}
+```
+Put the file under ```conf.d``` directory.
 
 ## Installation - self-hosted
 
