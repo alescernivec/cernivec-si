@@ -61,6 +61,17 @@ cd ..
 
 and back to **1**.
 
+### Udate the site with the newly added content
+
+After adding a new `markdown` file with the new content, you need only to pull the new content from Github repo and rebuild the site with `docker-compose`:
+
+```
+git pull
+docker-compose exec site jekyll build
+```
+
+and now, you are serving the newly created content. Of course, putting this in cronjob is better.
+
 ## Set up nginx
 
 In the example above docker-compose file has port ```8080``` used as Jekyll's HTTP port. Nginx's ```.conf``` file should be similar to this:
