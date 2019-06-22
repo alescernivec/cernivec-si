@@ -18,7 +18,7 @@ What have I done?
 
 Hopefully, this will do for some time. There is still lots of things to do, like automatic backup to ```Koofr```, automatic (cronjob-based) Jekyll rebuilds, wire up additional domains via Let's Encrypt, do some monitoring of the site, etc.
 
-Sources of this side are available [here][site].
+Sources of this site are available [here][site].
 
 All these will be described here soon.
 
