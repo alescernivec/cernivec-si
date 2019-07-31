@@ -72,6 +72,10 @@ docker-compose exec site jekyll build
 
 and now, you are serving the newly created content. Of course, putting this in cronjob is better.
 
+If this does not work, use ```-I``` switch with the command. This will take into account that this goes for incremental build.
+
+Important: post must be in the past! In case you use future dates, there will be no post generated and no error! Strange.
+
 ## Set up nginx
 
 In the example above docker-compose file has port ```8080``` used as Jekyll's HTTP port. Nginx's ```.conf``` file should be similar to this:
