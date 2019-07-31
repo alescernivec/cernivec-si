@@ -61,7 +61,7 @@ cd ..
 
 and back to **1**.
 
-### Udate the site with the newly added content
+### Update the site with the newly added content
 
 After adding a new `markdown` file with the new content, you need only to pull the new content from Github repo and rebuild the site with `docker-compose`:
 
