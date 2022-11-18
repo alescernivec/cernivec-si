@@ -7,11 +7,16 @@ permalink: /about/
 Here you can find some fun facts about me and my work.
 
 My public PGP key can be found [here](http://pgp.mit.edu:11371/pks/lookup?op=vindex&search=0x96F80CA3A4B8B857&op=get) or [here](http://k00.fr/klr0zgsp). You can also grab it with this command:
+
 ```
 curl "https://app.koofr.net/content/links/714bd821-bb0f-4950-bab6-de80d8385b5c/files/get/public-key.pgp?path="
 ```
 
 Researcher and developer @ [XLAB](http://xlab.si/), pet-lover, sports enthusiast
+
+Mastodon: [@alescernivec @ toot.si](https://toot.si/@alescernivec)
+
+Twitter: [alescernivec](https://twitter.com/alescernivec)
 
 My old blog: [alescernivec.blogspot.com](http://alescernivec.blogspot.com) 
 
