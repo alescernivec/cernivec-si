@@ -1,119 +1,133 @@
 # cernivec-si
-My homepage
 
-## Run the site with Docker 
+Personal homepage built with Jekyll.
 
-Check out: https://github.com/envygeeks/jekyll-docker
+## Dependencies
 
-Next section is taken out of the site aboove.
+This repository tracks Ruby dependencies with Bundler:
 
-### Docker-Compose
+- `Gemfile`
+- `Gemfile.lock`
 
-```yml
-version: "3"
-services:
-  site:
-    command: jekyll serve
-    image: jekyll/jekyll:latest
-    volumes:
-      - $PWD:/srv/jekyll
-      - $PWD/vendor/bundle:/usr/local/bundle
-    ports:
-      - 4000:4000
-      - 35729:35729
-      - 3000:3000
-      - 8080:4000
-```
+Both development (`docker-compose.yml`) and production (`Dockerfile` + `docker-compose.prod.yml`) expect these files to be present.
 
-#### Usage
+## Overview
 
-**1.** Create site:
+This project now uses two modes:
 
-```sh
-docker-compose run site jekyll new mysite
-```
+- **Development**: run Jekyll locally for authoring/preview.
+- **Production**: build static site and serve it from Nginx via Docker.
 
-**2.** Change to the new site's folder:
+Production does **not** use `jekyll serve`.
 
-```sh
-cd mysite
-```
+---
 
-**3.** Initial build and serve:
+## Development (local preview)
 
-```sh
-docker-compose up -d
-```
+If you already have a dev `docker-compose.yml`, keep using it for local editing and live preview.
 
-While running with above command you can:
+Typical command:
 
-Build again (for apply `_config.yml` file):
-```sh
-docker-compose exec site jekyll build
-```
+````bash
+docker compose up -d
+````
 
-**Note:** If you want to create another site, then you have to stop the container, change to docker-compose's root folder and repeat the steps above.
+Then open:
 
-```sh
-docker-compose stop
-cd ..
-```
+- `http://localhost:4000` (or your configured port)
 
-and back to **1**.
+---
 
-### Update the site with the newly added content
+## Production setup
 
-After adding a new `markdown` file with the new content, you need only to pull the new content from Github repo and rebuild the site with `docker-compose`:
+Production files:
 
-```
+- `Dockerfile` (multi-stage: Jekyll build + Nginx runtime)
+- `deploy/nginx.conf`
+- `docker-compose.prod.yml`
+
+### Build and run
+
+````bash
+cd /home/ales/Workspace/site/cernivec-si
+docker compose -f docker-compose.prod.yml up --build -d
+````
+
+Site is served on:
+
+- `http://localhost:8080`
+
+### Stop
+
+````bash
+docker compose -f docker-compose.prod.yml down
+````
+
+### Rebuild after content changes
+
+````bash
 git pull
-docker-compose exec site jekyll build
-```
+docker compose -f docker-compose.prod.yml up --build -d
+````
 
-and now, you are serving the newly created content. Of course, putting this in cronjob is better.
+---
 
-If this does not work, use ```-I``` switch with the command. This will take into account that this goes for incremental build.
+## Quick test recommendations
 
-Important: post must be in the past! In case you use future dates, there will be no post generated and no error! Strange.
+Run these checks after deployment:
 
-## Set up nginx
+### 1) Container is healthy/running
 
-In the example above docker-compose file has port ```8080``` used as Jekyll's HTTP port. Nginx's ```.conf``` file should be similar to this:
+````bash
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs --tail=100
+````
 
-```
-server {
-    server_name    cernivec.si www.cernivec.si;
-    listen         80;
-    listen         [::]:80;
+### 2) Homepage responds
 
-  location / {
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_pass http://localhost:8080;
-  }
+````bash
+curl -I http://localhost:8080
+````
 
-}
-```
-Put the file under ```conf.d``` directory.
+Expected: `HTTP/1.1 200 OK`.
 
-## Installation - self-hosted
+### 3) Cache headers are correct
 
-Installation of jekyll:
-```
-   sudo apt-get install ruby
-   sudo gem install mkmf
-   sudo apt-get install ruby1.9.1-dev
-   sudo gem install jekyll
-```
-Usage
+HTML should be no-cache:
 
-```
-   jekyll b
-   jekyll s
-```
+````bash
+curl -I http://localhost:8080/
+````
 
-## Post Jekyll setup
+Expected header includes:
 
-### Serve the site via HTTPS (Let's Encrypt)
+- `Cache-Control: no-cache`
 
-Check out these tutorials on how to set-up Let's Encrypt: https://linuxize.com/post/secure-nginx-with-let-s-encrypt-on-centos-7/
+Assets should be long-lived cache (if `/assets/...` exists):
+
+````bash
+curl -I http://localhost:8080/assets/<your-asset-file>
+````
+
+Expected header includes:
+
+- `Cache-Control: public, immutable`
+
+### 4) Security headers present
+
+````bash
+curl -I http://localhost:8080 | grep -Ei 'x-content-type-options|x-frame-options|referrer-policy'
+````
+
+Expected to include:
+
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: SAMEORIGIN`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+
+---
+
+## Notes
+
+- Posts with future dates are not published by default.
+- Use external TLS termination (for example Cloudflare or reverse proxy with Let’s Encrypt) for HTTPS in production.

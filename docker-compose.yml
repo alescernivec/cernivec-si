@@ -1,14 +1,11 @@
-version: "3"
 services:
-  site:
-    command: jekyll serve
-    image: jekyll/jekyll:latest
-    volumes:
-      - $PWD:/srv/jekyll
-      - $PWD/vendor/bundle:/usr/local/bundle
+  jekyll:
+    image: ruby:3.3-alpine
+    working_dir: /site
+    command: sh -lc "apk add --no-cache build-base git && bundle install && bundle exec jekyll serve --host 0.0.0.0 --livereload --future"
     ports:
-      - 127.0.0.1:4000:4000
-      - 127.0.0.1:35729:35729
-      - 127.0.0.1:3000:3000
-      - 127.0.0.1:8080:4000
-
+      - "4000:4000"
+      - "35729:35729"
+    volumes:
+      - ./:/site
+    restart: unless-stopped
