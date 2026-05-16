@@ -2,6 +2,15 @@
 
 Personal homepage built with Jekyll.
 
+## Dependencies
+
+This repository tracks Ruby dependencies with Bundler:
+
+- `Gemfile`
+- `Gemfile.lock`
+
+Both development (`docker-compose.yml`) and production (`Dockerfile` + `docker-compose.prod.yml`) expect these files to be present.
+
 ## Overview
 
 This project now uses two modes:
