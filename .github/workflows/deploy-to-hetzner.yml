@@ -1,0 +1,77 @@
+name: Deploy To Hetzner VM
+
+on:
+  workflow_run:
+    workflows:
+      - Build Image On Blog Changes
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Docker image tag to deploy (for example sha-<commit>)
+        required: false
+        default: latest
+
+concurrency:
+  group: deploy-hetzner-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy On Hetzner
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master'))
+
+    steps:
+      - name: Resolve image tag
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.image_tag }}" ]; then
+            echo "image_tag=${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "image_tag=sha-${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare SSH key
+        env:
+          SSH_KEY: ${{ secrets.HETZNER_SSH_KEY }}
+        run: |
+          set -eu
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      - name: Add host to known_hosts
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_SSH_PORT: ${{ secrets.HETZNER_SSH_PORT || '22' }}
+        run: |
+          set -eu
+          ssh-keyscan -p "$HETZNER_SSH_PORT" -H "$HETZNER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy via OpenSSH
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_USER: ${{ secrets.HETZNER_USER }}
+          HETZNER_SSH_PORT: ${{ secrets.HETZNER_SSH_PORT || '22' }}
+          HETZNER_DEPLOY_PATH: ${{ secrets.HETZNER_DEPLOY_PATH }}
+          IMAGE_TAG: ${{ steps.vars.outputs.image_tag }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          set -eu
+          ssh -p "$HETZNER_SSH_PORT" "$HETZNER_USER@$HETZNER_HOST" \
+            "export CERNIVEC_IMAGE_TAG='$IMAGE_TAG' DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' DOCKERHUB_TOKEN='$DOCKERHUB_TOKEN' HETZNER_DEPLOY_PATH='$HETZNER_DEPLOY_PATH'; bash -se" << 'EOF'
+          set -eu
+          cd "$HETZNER_DEPLOY_PATH"
+          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          docker image prune -f
+          EOF
