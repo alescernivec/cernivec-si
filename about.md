@@ -22,8 +22,6 @@ LinkedIn profile: [alescernivec at LinkedIn](http://www.linkedin.com/profile/vie
 
 Facebook profile: [www.facebook.com/ales.cernivec](http://www.facebook.com/ales.cernivec)
 
-Mendeley profile: [alescernivec on Mendeley](http://www.mendeley.com/profiles/ales-cernivec)
-
 Google scholar profile: [Ales Cernivec in Google Scholar](http://scholar.google.si/citations?user=Nh-Ckg0AAAAJ&hl=en)
 
 Ext site maintainer of [DlogS - Slovenian society of speech therapists](http://www.dlogs.si)
